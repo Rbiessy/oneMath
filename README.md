@@ -142,9 +142,7 @@ $> clang++ -fsycl app.o –L$ONEMKL/lib –lonemkl_blas_mklcpu –lonemkl_blas_c
 
 ### Supported Configurations:
 
-Supported domains: BLAS, LAPACK, RNG, DFT
-
-Support for SPARSE_BLAS domain is in progress and disabled by default. Use it at your own risks.
+Supported domains: BLAS, LAPACK, RNG, DFT, SPARSE_BLAS
 
 #### Linux*
 
@@ -264,6 +262,18 @@ Support for SPARSE_BLAS domain is in progress and disabled by default. Use it at
         <tr>
             <td align="center">AMD GPU</td>
             <td align="center">AMD rocFFT</td>
+            <td align="center">Dynamic, Static</td>
+            <td align="center">DPC++</td>
+        </tr>
+        <tr>
+            <td rowspan=2 align="center">SPARSE_BLAS</td>
+            <td align="center">Intel GPU</td>
+            <td rowspan=2 align="center">Intel(R) oneAPI Math Kernel Library</td>
+            <td align="center">Dynamic, Static</td>
+            <td align="center">DPC++</td>
+        </tr>
+        <tr>
+            <td align="center">x86 CPU</td>
             <td align="center">Dynamic, Static</td>
             <td align="center">DPC++</td>
         </tr>
