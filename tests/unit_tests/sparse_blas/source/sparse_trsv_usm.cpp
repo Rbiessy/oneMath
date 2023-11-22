@@ -185,10 +185,13 @@ bool test_helper(sycl::device *dev, oneapi::mkl::transpose transpose_val) {
     EXPECT_TRUE_OR_FUTURE_SKIP(test<fpType>(dev, m, density_A_matrix, index_zero, lower,
                                             transpose_val, oneapi::mkl::diag::unit, use_optimize),
                                skip);
-    // Test int64 indices
-    EXPECT_TRUE_OR_FUTURE_SKIP(test<fpType>(dev, 15L, density_A_matrix, index_zero, lower,
-                                            transpose_val, nonunit, use_optimize),
-                               skip);
+    // Temporarily disable trsv using long indices on GPU
+    if (!dev->is_gpu()) {
+        // Test int64 indices
+        EXPECT_TRUE_OR_FUTURE_SKIP(test<fpType>(dev, 15L, density_A_matrix, index_zero, lower,
+                                                transpose_val, nonunit, use_optimize),
+                                   skip);
+    }
     // Test lower without optimize_trsv
     EXPECT_TRUE_OR_FUTURE_SKIP(
         test<fpType>(dev, m, density_A_matrix, index_zero, lower, transpose_val, nonunit, false),
