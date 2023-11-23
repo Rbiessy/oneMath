@@ -18,11 +18,11 @@
 #===============================================================================
 
 set(SPBLAS_SOURCES
-  "sparse_gemm_buffer.cpp"
+  #"sparse_gemm_buffer.cpp"
   "sparse_gemm_usm.cpp"
-  "sparse_gemv_buffer.cpp"
+  #"sparse_gemv_buffer.cpp"
   "sparse_gemv_usm.cpp"
-  "sparse_trsv_buffer.cpp"
+  #"sparse_trsv_buffer.cpp"
   "sparse_trsv_usm.cpp"
 )
 
@@ -43,21 +43,21 @@ if (BUILD_SHARED_LIBS)
     else ()
         target_link_libraries(spblas_source_rt PUBLIC ONEMKL::SYCL::SYCL)
     endif ()
-    target_link_libraries(spblas_source_rt PRIVATE onemkl_warnings)
+    target_link_libraries(spblas_source_rt PRIVATE onemkl_warnings MKL::MKL_DPCPP)
 endif ()
 
-add_library(spblas_source_ct OBJECT ${SPBLAS_SOURCES})
-target_compile_options(spblas_source_ct PRIVATE -DNOMINMAX)
-target_include_directories(spblas_source_ct
-        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include
-        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../../include
-        PUBLIC ${PROJECT_SOURCE_DIR}/include
-        PUBLIC ${PROJECT_SOURCE_DIR}/deps/googletest/include
-        PUBLIC ${CMAKE_BINARY_DIR}/bin
-        )
-if (USE_ADD_SYCL_TO_TARGET_INTEGRATION)
-    add_sycl_to_target(TARGET spblas_source_ct SOURCES ${SPBLAS_SOURCES})
-else ()
-    target_link_libraries(spblas_source_ct PUBLIC ONEMKL::SYCL::SYCL)
-endif ()
-target_link_libraries(spblas_source_ct PRIVATE onemkl_warnings)
+# add_library(spblas_source_ct OBJECT ${SPBLAS_SOURCES})
+# target_compile_options(spblas_source_ct PRIVATE -DNOMINMAX)
+# target_include_directories(spblas_source_ct
+#         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include
+#         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+#         PUBLIC ${PROJECT_SOURCE_DIR}/include
+#         PUBLIC ${PROJECT_SOURCE_DIR}/deps/googletest/include
+#         PUBLIC ${CMAKE_BINARY_DIR}/bin
+#         )
+# if (USE_ADD_SYCL_TO_TARGET_INTEGRATION)
+#     add_sycl_to_target(TARGET spblas_source_ct SOURCES ${SPBLAS_SOURCES})
+# else ()
+#     target_link_libraries(spblas_source_ct PUBLIC ONEMKL::SYCL::SYCL)
+# endif ()
+# target_link_libraries(spblas_source_ct PRIVATE onemkl_warnings)

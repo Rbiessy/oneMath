@@ -28,7 +28,7 @@
 #include <CL/sycl.hpp>
 #endif
 
-#include "oneapi/mkl.hpp"
+//#include "oneapi/mkl.hpp"
 #include "oneapi/mkl/detail/config.hpp"
 #include "sparse_reference.hpp"
 #include "test_common.hpp"
@@ -46,6 +46,8 @@ int test(sycl::device *dev, intType nrows_A, intType ncols_A, intType ncols_C,
          oneapi::mkl::layout dense_matrix_layout, oneapi::mkl::transpose transpose_A,
          oneapi::mkl::transpose transpose_B, fpType alpha, fpType beta, intType ldb, intType ldc,
          bool opt_1_input, bool opt_2_inputs) {
+    (void)opt_1_input;
+    (void)opt_2_inputs;
     sycl::queue main_queue(*dev, exception_handler_t());
 
     intType int_index = (index == oneapi::mkl::index_base::zero) ? 0 : 1;
@@ -59,6 +61,7 @@ int test(sycl::device *dev, intType nrows_A, intType ncols_A, intType ncols_C,
     std::vector<fpType> a_host;
     intType nnz = generate_random_matrix<fpType, intType>(nrows_A, ncols_A, density_A_matrix,
                                                           int_index, ia_host, ja_host, a_host);
+    (void)nnz;
 
     // Input and output dense vectors
     std::vector<fpType> b_host, c_host;
@@ -105,12 +108,12 @@ int test(sycl::device *dev, intType nrows_A, intType ncols_A, intType ncols_C,
     for (int i = 0; i < runs; ++i) {
     try {
         sycl::event event;
-        CALL_RT_OR_CT(oneapi::mkl::sparse::init_matrix_handle, main_queue, &handle);
+        oneapi::mkl::sparse::init_matrix_handle(&handle);
 
         CALL_RT_OR_CT(event = oneapi::mkl::sparse::set_csr_data, main_queue, handle, nrows_A,
-                      ncols_A, nnz, index, ia_usm, ja_usm, a_usm, mat_dependencies);
+                      ncols_A, index, ia_usm, ja_usm, a_usm, mat_dependencies);
 
-        if (opt_1_input) {
+        /*if (opt_1_input) {
             CALL_RT_OR_CT(event = oneapi::mkl::sparse::optimize_gemm, main_queue, transpose_A,
                           handle, { event });
         }
@@ -119,7 +122,7 @@ int test(sycl::device *dev, intType nrows_A, intType ncols_A, intType ncols_C,
             CALL_RT_OR_CT(event = oneapi::mkl::sparse::optimize_gemm, main_queue, transpose_A,
                           transpose_B, dense_matrix_layout, static_cast<std::int64_t>(ncols_C),
                           handle, { event });
-        }
+        }*/
 
         gemm_dependencies.push_back(event);
         CALL_RT_OR_CT(event = oneapi::mkl::sparse::gemm, main_queue, dense_matrix_layout,

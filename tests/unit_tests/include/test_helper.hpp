@@ -30,7 +30,8 @@
 #include <CL/sycl.hpp>
 #endif
 
-#include "oneapi/mkl.hpp"
+//#include "oneapi/mkl.hpp"
+#include "oneapi/mkl/spblas.hpp"
 #include "oneapi/mkl/detail/config.hpp"
 #include "oneapi/mkl/detail/backend_selector.hpp"
 

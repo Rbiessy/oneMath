@@ -28,7 +28,7 @@
 #include <CL/sycl.hpp>
 #endif
 
-#include "oneapi/mkl.hpp"
+//#include "oneapi/mkl.hpp"
 #include "oneapi/mkl/detail/config.hpp"
 #include "sparse_reference.hpp"
 #include "test_common.hpp"
@@ -57,6 +57,7 @@ int test(sycl::device *dev, intType nrows, intType ncols, double density_A_matri
     std::vector<fpType> a_host;
     intType nnz = generate_random_matrix<fpType, intType>(nrows, ncols, density_A_matrix, int_index,
                                                           ia_host, ja_host, a_host);
+    (void)nnz;
 
     // Input and output dense vectors
     // The input `x` and the input-output `y` are both initialized to random values on host and device.
@@ -102,10 +103,10 @@ int test(sycl::device *dev, intType nrows, intType ncols, double density_A_matri
     for (int i = 0; i < runs; ++i) {
     try {
         sycl::event event;
-        CALL_RT_OR_CT(oneapi::mkl::sparse::init_matrix_handle, main_queue, &handle);
+        oneapi::mkl::sparse::init_matrix_handle(&handle);
 
         CALL_RT_OR_CT(event = oneapi::mkl::sparse::set_csr_data, main_queue, handle, nrows, ncols,
-                      nnz, index, ia_usm, ja_usm, a_usm, mat_dependencies);
+                      index, ia_usm, ja_usm, a_usm, mat_dependencies);
 
         if (use_optimize) {
             CALL_RT_OR_CT(event = oneapi::mkl::sparse::optimize_gemv, main_queue, transpose_val,
