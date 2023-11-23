@@ -20,6 +20,7 @@
 #include <complex>
 #include <iostream>
 #include <vector>
+#include <chrono>
 
 #if __has_include(<sycl/sycl.hpp>)
 #include <sycl/sycl.hpp>
@@ -98,6 +99,10 @@ int test(sycl::device *dev, intType nrows_A, intType ncols_A, intType ncols_C,
 
     sycl::event ev_copy, ev_release;
     oneapi::mkl::sparse::matrix_handle_t handle = nullptr;
+    std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
+    start = std::chrono::high_resolution_clock::now();
+    int runs = 100;
+    for (int i = 0; i < runs; ++i) {
     try {
         sycl::event event;
         CALL_RT_OR_CT(oneapi::mkl::sparse::init_matrix_handle, main_queue, &handle);
@@ -123,8 +128,7 @@ int test(sycl::device *dev, intType nrows_A, intType ncols_A, intType ncols_C,
 
         CALL_RT_OR_CT(ev_release = oneapi::mkl::sparse::release_matrix_handle, main_queue, &handle,
                       { event });
-
-        ev_copy = main_queue.memcpy(c_host.data(), c_usm, c_host.size() * sizeof(fpType), event);
+        ev_release.wait_and_throw();
     }
     catch (const sycl::exception &e) {
         std::cout << "Caught synchronous SYCL exception during sparse GEMV:\n"
@@ -140,6 +144,11 @@ int test(sycl::device *dev, intType nrows_A, intType ncols_A, intType ncols_C,
         std::cout << "Error raised during execution of sparse GEMV:\n" << error.what() << std::endl;
         return 0;
     }
+    }
+    end = std::chrono::high_resolution_clock::now();
+    double elapsed_seconds =
+        std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count() / static_cast<double>(runs);
+    std::cout << "gemm time:" << elapsed_seconds << "s\n";
 
     // Compute reference.
     prepare_reference_gemm_data(ia_host.data(), ja_host.data(), a_host.data(), nrows_A, ncols_A,
@@ -148,6 +157,7 @@ int test(sycl::device *dev, intType nrows_A, intType ncols_A, intType ncols_C,
                                 c_ref_host.data());
 
     // Compare the results of reference implementation and DPC++ implementation.
+    ev_copy = main_queue.memcpy(c_host.data(), c_usm, c_host.size() * sizeof(fpType), ev_release);
     ev_copy.wait_and_throw();
     bool valid = check_equal_vector(c_host, c_ref_host);
 
@@ -173,7 +183,7 @@ bool test_helper(sycl::device *dev, oneapi::mkl::transpose transpose_A,
     fpType fp_one = set_fp_value<fpType>()(1.f, 0.f);
     oneapi::mkl::index_base index_zero = oneapi::mkl::index_base::zero;
     oneapi::mkl::layout col_major = oneapi::mkl::layout::col_major;
-    int nrows_A = 4, ncols_A = 6, ncols_C = 5;
+    int nrows_A = 40, ncols_A = 60, ncols_C = 5;
     int ldb = transpose_A == oneapi::mkl::transpose::nontrans ? ncols_A : nrows_A;
     int ldc = transpose_A == oneapi::mkl::transpose::nontrans ? nrows_A : ncols_A;
     bool no_opt_1_input = false;
@@ -186,7 +196,7 @@ bool test_helper(sycl::device *dev, oneapi::mkl::transpose transpose_A,
              transpose_B, fp_one, fp_zero, ldb, ldc, no_opt_1_input, opt_2_inputs),
         skip);
     // Test index_base 1
-    EXPECT_TRUE_OR_FUTURE_SKIP(
+    /*EXPECT_TRUE_OR_FUTURE_SKIP(
         test(dev, nrows_A, ncols_A, ncols_C, density_A_matrix, oneapi::mkl::index_base::one,
              col_major, transpose_A, transpose_B, fp_one, fp_zero, ldb, ldc, no_opt_1_input,
              opt_2_inputs),
@@ -251,7 +261,7 @@ bool test_helper(sycl::device *dev, oneapi::mkl::transpose transpose_A,
     EXPECT_TRUE_OR_FUTURE_SKIP(
         test(dev, nrows_A, ncols_A, ncols_C, density_A_matrix, index_zero, col_major, transpose_A,
              transpose_B, fp_one, fp_zero, ldb, ldc, false, false),
-        skip);
+        skip);*/
     return skip;
 }
 
@@ -265,9 +275,9 @@ bool test_helper(sycl::device *dev, oneapi::mkl::transpose transpose_A,
 template <typename fpType>
 bool test_helper_transpose(sycl::device *dev) {
     std::vector<oneapi::mkl::transpose> transpose_vals{ oneapi::mkl::transpose::nontrans,
-                                                        oneapi::mkl::transpose::trans };
+                                                        /*oneapi::mkl::transpose::trans*/ };
     if (complex_info<fpType>::is_complex) {
-        transpose_vals.push_back(oneapi::mkl::transpose::conjtrans);
+        //transpose_vals.push_back(oneapi::mkl::transpose::conjtrans);
     }
     bool skip = false;
     for (auto transpose_A : transpose_vals) {

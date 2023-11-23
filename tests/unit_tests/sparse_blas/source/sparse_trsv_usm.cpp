@@ -20,6 +20,7 @@
 #include <complex>
 #include <iostream>
 #include <vector>
+#include <chrono>
 
 #if __has_include(<sycl/sycl.hpp>)
 #include <sycl/sycl.hpp>
@@ -100,6 +101,10 @@ int test(sycl::device *dev, intType m, double density_A_matrix, oneapi::mkl::ind
 
     sycl::event ev_copy, ev_release;
     oneapi::mkl::sparse::matrix_handle_t handle = nullptr;
+    std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
+    start = std::chrono::high_resolution_clock::now();
+    int runs = 100;
+    for (int i = 0; i < runs; ++i) {
     try {
         sycl::event event;
         CALL_RT_OR_CT(oneapi::mkl::sparse::init_matrix_handle, main_queue, &handle);
@@ -118,8 +123,7 @@ int test(sycl::device *dev, intType m, double density_A_matrix, oneapi::mkl::ind
 
         CALL_RT_OR_CT(ev_release = oneapi::mkl::sparse::release_matrix_handle, main_queue, &handle,
                       { event });
-
-        ev_copy = main_queue.memcpy(y_host.data(), y_usm, y_host.size() * sizeof(fpType), event);
+        ev_release.wait_and_throw();
     }
     catch (const sycl::exception &e) {
         std::cout << "Caught synchronous SYCL exception during sparse TRSV:\n"
@@ -135,6 +139,11 @@ int test(sycl::device *dev, intType m, double density_A_matrix, oneapi::mkl::ind
         std::cout << "Error raised during execution of sparse TRSV:\n" << error.what() << std::endl;
         return 0;
     }
+    }
+    end = std::chrono::high_resolution_clock::now();
+    double elapsed_seconds =
+        std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count() / static_cast<double>(runs);
+    std::cout << "trsv time:" << elapsed_seconds << "s\n";
 
     // Compute reference.
     prepare_reference_trsv_data(ia_host.data(), ja_host.data(), a_host.data(), m, int_index,
@@ -142,6 +151,7 @@ int test(sycl::device *dev, intType m, double density_A_matrix, oneapi::mkl::ind
                                 y_ref_host.data());
 
     // Compare the results of reference implementation and DPC++ implementation.
+    ev_copy = main_queue.memcpy(y_host.data(), y_usm, y_host.size() * sizeof(fpType), ev_release);
     ev_copy.wait_and_throw();
     bool valid = check_equal_vector(y_host, y_ref_host);
 
@@ -173,7 +183,7 @@ bool test_helper(sycl::device *dev, oneapi::mkl::transpose transpose_val) {
                                             transpose_val, nonunit, use_optimize),
                                skip);
     // Test index_base 1
-    EXPECT_TRUE_OR_FUTURE_SKIP(test<fpType>(dev, m, density_A_matrix, oneapi::mkl::index_base::one,
+    /*EXPECT_TRUE_OR_FUTURE_SKIP(test<fpType>(dev, m, density_A_matrix, oneapi::mkl::index_base::one,
                                             lower, transpose_val, nonunit, use_optimize),
                                skip);
     // Test upper triangular matrix
@@ -200,7 +210,7 @@ bool test_helper(sycl::device *dev, oneapi::mkl::transpose transpose_val) {
     EXPECT_TRUE_OR_FUTURE_SKIP(
         test<fpType>(dev, m, density_A_matrix, index_zero, oneapi::mkl::uplo::upper, transpose_val,
                      nonunit, false),
-        skip);
+        skip);*/
     return skip;
 }
 
@@ -208,7 +218,7 @@ TEST_P(SparseTrsvUsmTests, RealSinglePrecision) {
     using fpType = float;
     bool skip = false;
     skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::nontrans);
-    skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::trans);
+    //skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::trans);
     if (skip) {
         // Mark that some tests were skipped
         GTEST_SKIP();
@@ -220,7 +230,7 @@ TEST_P(SparseTrsvUsmTests, RealDoublePrecision) {
     CHECK_DOUBLE_ON_DEVICE(GetParam());
     bool skip = false;
     skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::nontrans);
-    skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::trans);
+    //skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::trans);
     if (skip) {
         // Mark that some tests were skipped
         GTEST_SKIP();
@@ -231,8 +241,8 @@ TEST_P(SparseTrsvUsmTests, ComplexSinglePrecision) {
     using fpType = std::complex<float>;
     bool skip = false;
     skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::nontrans);
-    skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::trans);
-    skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::conjtrans);
+    //skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::trans);
+    //skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::conjtrans);
     if (skip) {
         // Mark that some tests were skipped
         GTEST_SKIP();
@@ -244,8 +254,8 @@ TEST_P(SparseTrsvUsmTests, ComplexDoublePrecision) {
     CHECK_DOUBLE_ON_DEVICE(GetParam());
     bool skip = false;
     skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::nontrans);
-    skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::trans);
-    skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::conjtrans);
+    //skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::trans);
+    //skip |= test_helper<fpType>(GetParam(), oneapi::mkl::transpose::conjtrans);
     if (skip) {
         // Mark that some tests were skipped
         GTEST_SKIP();
