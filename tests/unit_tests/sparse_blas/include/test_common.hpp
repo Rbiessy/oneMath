@@ -209,13 +209,6 @@ void shuffle_data(const intType *ia, intType *ja, fpType *a, const std::size_t n
     }
 }
 
-inline void wait_and_free(sycl::queue &main_queue, oneapi::mkl::sparse::matrix_handle_t *p_handle) {
-    main_queue.wait();
-    sycl::event ev_release;
-    CALL_RT_OR_CT(ev_release = oneapi::mkl::sparse::release_matrix_handle, main_queue, p_handle);
-    ev_release.wait();
-}
-
 template <typename fpType>
 bool check_equal(fpType x, fpType x_ref, double abs_error_margin, double rel_error_margin,
                  std::ostream &out) {
