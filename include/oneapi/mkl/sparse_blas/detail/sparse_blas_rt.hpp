@@ -72,6 +72,7 @@ sycl::event destroy_csr_matrix(sycl::queue &queue, matrix_handle_t smhandle,
                                const std::vector<sycl::event> &dependencies = {});
 
 // Matrix property
+// TODO(Romain): Provide another overload that throw if a property is unsupported?
 void set_matrix_property(sycl::queue &queue, matrix_handle_t smhandle,
                          matrix_property property_value);
 
