@@ -27,8 +27,9 @@ namespace oneapi {
 namespace mkl {
 namespace sparse {
 
-// TODO(Romain): Make functions create_* and destroy_* synchronous
+// TODO(Romain): Make functions create_*, destroy_* and *_buffer_size synchronous
 // TODO(Romain): Update API for gemm and gemv operations
+// TODO(Romain): Introduce matrix_view type to store some "matrix description" enum, uplo_val and diag_val
 
 // Dense vector
 template <typename fpType>
@@ -79,6 +80,7 @@ void set_matrix_property(sycl::queue &queue, matrix_handle_t smhandle,
 // TODO(Romain): Add support for setting matrices and vector data
 
 // Operation descriptor
+// TODO(Romain): Remove template fpType, not needed after all
 template <typename fpType>
 std::enable_if_t<detail::is_fp_supported_v<fpType>> init_trsv_descr(sycl::queue &queue,
                                                                     trsv_descr_t *p_trsv_descr);
@@ -111,6 +113,7 @@ void optimize_trsv(sycl::queue &queue, uplo uplo_val, transpose transpose_val, d
                    matrix_handle_t A_handle, trsv_alg alg, trsv_descr_t trsv_descr,
                    std::int64_t temp_buffer_size, sycl::buffer<std::uint8_t, 1> temp_buffer);
 // TODO(Romain): Make synchronous?
+// TODO(Romain): For trsv only, optimize_trsv should be renamed analyse_trsv and be mandatory. Other optimize_* functions are optional.
 sycl::event optimize_trsv(sycl::queue &queue, uplo uplo_val, transpose transpose_val, diag diag_val,
                           matrix_handle_t A_handle, trsv_alg alg, trsv_descr_t trsv_descr,
                           std::int64_t temp_buffer_size, void *temp_buffer,

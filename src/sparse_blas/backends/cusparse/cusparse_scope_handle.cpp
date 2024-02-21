@@ -35,8 +35,8 @@ namespace oneapi::mkl::sparse::cusparse::detail {
 thread_local cusparse_handle<pi_context> CusparseScopedContextHandler::handle_helper =
     cusparse_handle<pi_context>{};
 
-CusparseScopedContextHandler::CusparseScopedContextHandler(sycl::queue queue)
-        : needToRecover_(false) {
+CusparseScopedContextHandler::CusparseScopedContextHandler(sycl::queue queue, sycl::interop_handle *ih)
+        : ih(ih), needToRecover_(false) {
     placedContext_ = new sycl::context(queue.get_context());
     auto device = queue.get_device();
     auto desired = sycl::get_native<sycl::backend::ext_oneapi_cuda>(*placedContext_);

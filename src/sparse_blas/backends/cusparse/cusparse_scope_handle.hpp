@@ -40,6 +40,7 @@ namespace oneapi::mkl::sparse::cusparse::detail {
 class CusparseScopedContextHandler {
     CUcontext original_;
     sycl::context *placedContext_;
+    sycl::interop_handle *ih;
     bool needToRecover_;
     static thread_local cusparse_handle<pi_context> handle_helper;
 
@@ -47,7 +48,7 @@ class CusparseScopedContextHandler {
     sycl::context get_context(const sycl::queue &queue);
 
 public:
-    CusparseScopedContextHandler(sycl::queue queue);
+    CusparseScopedContextHandler(sycl::queue queue, sycl::interop_handle *ih = nullptr);
 
     ~CusparseScopedContextHandler() noexcept(false);
 
@@ -64,7 +65,11 @@ public:
     // will be fixed when SYCL-2020 has been implemented for Pi backend.
     template <typename AccT>
     inline void *get_mem(AccT acc) {
-        return reinterpret_cast<void *>(&acc[0]);
+        if (!ih) {
+            throw oneapi::mkl::exception("sparse_blas", "get_mem", "Internal error: CusparseScopedContextHandler must be created inside an host_task to get the data from a buffer");
+        }
+        auto cudaPtr = ih->get_native_mem<sycl::backend::ext_oneapi_cuda>(acc);
+        return reinterpret_cast<void *>(cudaPtr);
     }
 
     template <typename T>

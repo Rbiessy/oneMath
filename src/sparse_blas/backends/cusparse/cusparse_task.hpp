@@ -66,10 +66,10 @@ void submit_host_task(sycl::handler &cgh, sycl::queue &queue, Functor functor,
                       CaptureAcc... accessors) {
     // Only capture the accessors to ensure the dependencies are properly handled
     // The accessors's pointer have already been set to the native container types in previous functions
-    cgh.host_task([functor, queue, accessors...]() {
+    cgh.host_task([functor, queue, accessors...](sycl::interop_handle ih) {
         auto unused = std::make_tuple(accessors...);
         (void)unused;
-        auto sc = CusparseScopedContextHandler(queue);
+        auto sc = CusparseScopedContextHandler(queue, &ih);
         functor(sc);
     });
 }

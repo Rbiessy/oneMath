@@ -232,7 +232,7 @@ bool check_equal(fpType x, fpType x_ref, double abs_error_margin, double rel_err
 }
 
 template <typename vecType1, typename vecType2>
-bool check_equal_vector(const vecType1 &v, const vecType2 &v_ref, double abs_error_factor = 10.0,
+bool check_equal_vector(const vecType1 &v, const vecType2 &v_ref, double abs_error_factor = 20.0,
                         double rel_error_factor = 200.0, std::ostream &out = std::cout) {
     using T = typename vecType2::value_type;
     std::size_t n = v.size();

@@ -33,6 +33,7 @@ struct trsv_descr {
     cusparseSpSVDescr_t cu_descr;
     cudaDataType compute_type;
 
+    // TODO(Romain): Make these static constexpr
     float alpha_one_fp32 = 1.f;
     double alpha_one_fp64 = 1.0;
     cuComplex alpha_one_cx32 = make_cuComplex(1.f, 0.f);
@@ -184,7 +185,6 @@ sycl::event trsv(sycl::queue &queue, uplo uplo_val, transpose transpose_val, dia
         auto cu_type = internal_trsv_descr->compute_type;
         auto cu_alg = detail::get_cuda_trsv_alg(alg);
         auto cu_descr = internal_trsv_descr->cu_descr;
-        //TODO(Romain): Investigate floating point exception
         auto status = cusparseSpSV_solve(cu_handle, cu_op, cu_alpha, cu_a, cu_x, cu_y, cu_type,
                                          cu_alg, cu_descr);
         detail::check_status(status, __FUNCTION__);
