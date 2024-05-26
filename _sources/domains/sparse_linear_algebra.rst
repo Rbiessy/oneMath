@@ -4,3 +4,5 @@ Sparse Linear Algebra
 ---------------------
 
 See the latest specification for the sparse domain here: https://oneapi-spec.uxlfoundation.org/specifications/oneapi/latest/elements/onemkl/source/domains/spblas/spblas
+
+This page documents implementation specific or backend specific details.
