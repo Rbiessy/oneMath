@@ -13,16 +13,17 @@ OneMKL Intel CPU and GPU backends
 
 Known limitations as of Intel oneMKL product release 2024.1:
 
-- All operations' algorithms except `no_optimize_alg` map to the default
+- All operations' algorithms except ``no_optimize_alg`` map to the default
   algorithm.
-- `oneapi::mkl::sparse::set_csr_data` and `oneapi::mkl::sparse::set_coo_data`
-  functions cannot be used on a handle that has already been used for an operation
-  or its optimize function. Doing so will throw an `oneapi::mkl::unimplemented`
-  exception.
-- Using `spmm` with a sparse matrix that is `oneapi::mkl::transpose::conjtrans`
-  and has the `oneapi::mkl::sparse::matrix_property::symmetric` property will
-  throw an `oneapi::mkl::unimplemented` exception.
-- Using `spsv` with the `oneapi::mkl::sparse::spsv_alg::no_optimize_alg` and a
-  sparse matrix that does not have the
-  `oneapi::mkl::sparse::matrix_property::sorted` property will throw an
-  `oneapi::mkl::unimplemented` exception.
+- ``oneapi::mkl::sparse::set_csr_data`` and
+  ``oneapi::mkl::sparse::set_coo_data`` functions cannot be used on a handle
+  that has already been used for an operation or its optimize function. Doing so
+  will throw an ``oneapi::mkl::unimplemented`` exception.
+- Using ``spmm`` with a sparse matrix that is
+  ``oneapi::mkl::transpose::conjtrans`` and has the
+  ``oneapi::mkl::sparse::matrix_property::symmetric`` property will throw an
+  ``oneapi::mkl::unimplemented`` exception.
+- Using ``spsv`` with the ``oneapi::mkl::sparse::spsv_alg::no_optimize_alg`` and
+  a sparse matrix that does not have the
+  ``oneapi::mkl::sparse::matrix_property::sorted`` property will throw an
+  ``oneapi::mkl::unimplemented`` exception.

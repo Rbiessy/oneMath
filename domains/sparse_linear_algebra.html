@@ -541,19 +541,20 @@ document.write(`
 <h2>OneMKL Intel CPU and GPU backends<a class="headerlink" href="#onemkl-intel-cpu-and-gpu-backends" title="Link to this heading">#</a></h2>
 <p>Known limitations as of Intel oneMKL product release 2024.1:</p>
 <ul class="simple">
-<li><p>All operations’ algorithms except <cite>no_optimize_alg</cite> map to the default
+<li><p>All operations’ algorithms except <code class="docutils literal notranslate"><span class="pre">no_optimize_alg</span></code> map to the default
 algorithm.</p></li>
-<li><p><cite>oneapi::mkl::sparse::set_csr_data</cite> and <cite>oneapi::mkl::sparse::set_coo_data</cite>
-functions cannot be used on a handle that has already been used for an operation
-or its optimize function. Doing so will throw an <cite>oneapi::mkl::unimplemented</cite>
-exception.</p></li>
-<li><p>Using <cite>spmm</cite> with a sparse matrix that is <cite>oneapi::mkl::transpose::conjtrans</cite>
-and has the <cite>oneapi::mkl::sparse::matrix_property::symmetric</cite> property will
-throw an <cite>oneapi::mkl::unimplemented</cite> exception.</p></li>
-<li><p>Using <cite>spsv</cite> with the <cite>oneapi::mkl::sparse::spsv_alg::no_optimize_alg</cite> and a
-sparse matrix that does not have the
-<cite>oneapi::mkl::sparse::matrix_property::sorted</cite> property will throw an
-<cite>oneapi::mkl::unimplemented</cite> exception.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">oneapi::mkl::sparse::set_csr_data</span></code> and
+<code class="docutils literal notranslate"><span class="pre">oneapi::mkl::sparse::set_coo_data</span></code> functions cannot be used on a handle
+that has already been used for an operation or its optimize function. Doing so
+will throw an <code class="docutils literal notranslate"><span class="pre">oneapi::mkl::unimplemented</span></code> exception.</p></li>
+<li><p>Using <code class="docutils literal notranslate"><span class="pre">spmm</span></code> with a sparse matrix that is
+<code class="docutils literal notranslate"><span class="pre">oneapi::mkl::transpose::conjtrans</span></code> and has the
+<code class="docutils literal notranslate"><span class="pre">oneapi::mkl::sparse::matrix_property::symmetric</span></code> property will throw an
+<code class="docutils literal notranslate"><span class="pre">oneapi::mkl::unimplemented</span></code> exception.</p></li>
+<li><p>Using <code class="docutils literal notranslate"><span class="pre">spsv</span></code> with the <code class="docutils literal notranslate"><span class="pre">oneapi::mkl::sparse::spsv_alg::no_optimize_alg</span></code> and
+a sparse matrix that does not have the
+<code class="docutils literal notranslate"><span class="pre">oneapi::mkl::sparse::matrix_property::sorted</span></code> property will throw an
+<code class="docutils literal notranslate"><span class="pre">oneapi::mkl::unimplemented</span></code> exception.</p></li>
 </ul>
 </section>
 </section>
