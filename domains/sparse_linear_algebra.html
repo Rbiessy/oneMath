@@ -536,13 +536,15 @@ document.write(`
   <section id="sparse-linear-algebra">
 <span id="onemkl-sparse-linear-algebra"></span><h1>Sparse Linear Algebra<a class="headerlink" href="#sparse-linear-algebra" title="Link to this heading">#</a></h1>
 <p>See the latest specification for the sparse domain <a class="reference external" href="https://oneapi-spec.uxlfoundation.org/specifications/oneapi/latest/elements/onemkl/source/domains/spblas/spblas">here</a>.</p>
-<p>This page documents implementation specific or backend specific details.</p>
+<p>This page documents implementation specific or backend specific details of the
+sparse domain.</p>
 <section id="onemkl-intel-cpu-and-gpu-backends">
 <h2>OneMKL Intel CPU and GPU backends<a class="headerlink" href="#onemkl-intel-cpu-and-gpu-backends" title="Link to this heading">#</a></h2>
 <p>Known limitations as of Intel oneMKL product release 2024.1:</p>
 <ul class="simple">
 <li><p>All operations’ algorithms except <code class="docutils literal notranslate"><span class="pre">no_optimize_alg</span></code> map to the default
 algorithm.</p></li>
+<li><p>The required external workspace size is always 0 bytes.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">oneapi::mkl::sparse::set_csr_data</span></code> and
 <code class="docutils literal notranslate"><span class="pre">oneapi::mkl::sparse::set_coo_data</span></code> functions cannot be used on a handle
 that has already been used for an operation or its optimize function. Doing so
