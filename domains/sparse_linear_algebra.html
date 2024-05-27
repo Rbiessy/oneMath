@@ -540,24 +540,21 @@ document.write(`
 <section id="onemkl-intel-cpu-and-gpu-backends">
 <h2>OneMKL Intel CPU and GPU backends<a class="headerlink" href="#onemkl-intel-cpu-and-gpu-backends" title="Link to this heading">#</a></h2>
 <p>Known limitations as of Intel oneMKL product release 2024.1:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>All operations’ algorithms except <cite>no_optimize_alg</cite> map to the default
-algorithm.</p></li>
-<li><p><cite>oneapi::mkl::sparse::set_csr_data</cite> and <cite>oneapi::mkl::sparse::set_coo_data</cite>
-functions cannot be used on a handle that has already been used for an
-operation or its optimize function. Doing so will throw an
-<cite>oneapi::mkl::unimplemented</cite> exception.</p></li>
-<li><p>Using <cite>spmm</cite> with a sparse matrix that is
-<cite>oneapi::mkl::transpose::conjtrans</cite> and has the
-<cite>oneapi::mkl::sparse::matrix_property::symmetric</cite> property will throw an
-<cite>oneapi::mkl::unimplemented</cite> exception.</p></li>
-<li><p>Using <cite>spsv</cite> with the <cite>oneapi::mkl::sparse::spsv_alg::no_optimize_alg</cite> and a
+<ul class="simple">
+<li><p>All operations’ algorithms except <cite>no_optimize_alg</cite> map to the default</p></li>
+</ul>
+<p>algorithm.
+- <cite>oneapi::mkl::sparse::set_csr_data</cite> and <cite>oneapi::mkl::sparse::set_coo_data</cite>
+functions cannot be used on a handle that has already been used for an operation
+or its optimize function. Doing so will throw an <cite>oneapi::mkl::unimplemented</cite>
+exception.
+- Using <cite>spmm</cite> with a sparse matrix that is <cite>oneapi::mkl::transpose::conjtrans</cite>
+and has the <cite>oneapi::mkl::sparse::matrix_property::symmetric</cite> property will
+throw an <cite>oneapi::mkl::unimplemented</cite> exception.
+- Using <cite>spsv</cite> with the <cite>oneapi::mkl::sparse::spsv_alg::no_optimize_alg</cite> and a
 sparse matrix that does not have the
 <cite>oneapi::mkl::sparse::matrix_property::sorted</cite> property will throw an
-<cite>oneapi::mkl::unimplemented</cite> exception.</p></li>
-</ul>
-</div></blockquote>
+<cite>oneapi::mkl::unimplemented</cite> exception.</p>
 </section>
 </section>
 
