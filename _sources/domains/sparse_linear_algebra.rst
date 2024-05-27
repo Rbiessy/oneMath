@@ -19,11 +19,11 @@ Known limitations as of Intel oneMKL product release 2024.1:
   ``oneapi::mkl::sparse::set_coo_data`` functions cannot be used on a handle
   that has already been used for an operation or its optimize function. Doing so
   will throw an ``oneapi::mkl::unimplemented`` exception.
-- Using ``spmm`` with a sparse matrix that is
-  ``oneapi::mkl::transpose::conjtrans`` and has the
-  ``oneapi::mkl::sparse::matrix_property::symmetric`` property will throw an
-  ``oneapi::mkl::unimplemented`` exception.
 - Using ``spsv`` with the ``oneapi::mkl::sparse::spsv_alg::no_optimize_alg`` and
   a sparse matrix that does not have the
   ``oneapi::mkl::sparse::matrix_property::sorted`` property will throw an
+  ``oneapi::mkl::unimplemented`` exception.
+- Using ``spmm`` on Intel GPU with a sparse matrix that is
+  ``oneapi::mkl::transpose::conjtrans`` and has the
+  ``oneapi::mkl::sparse::matrix_property::symmetric`` property will throw an
   ``oneapi::mkl::unimplemented`` exception.
