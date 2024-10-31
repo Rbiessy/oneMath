@@ -255,6 +255,7 @@ sycl::event dispatch_submit_impl_fp_int(const std::string &function_name, sycl::
     else {
         // USM submit does not need to capture accessors
         if constexpr (!UseWorkspace) {
+            std::cout << "USM submitting " << (UseEnqueueNativeCommandExt ? "native_command" : "host_task") << " num dependencies: " << dependencies.size() << std::endl;
             return queue.submit([&](sycl::handler &cgh) {
                 cgh.depends_on(dependencies);
                 if constexpr (UseEnqueueNativeCommandExt) {

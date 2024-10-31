@@ -23,6 +23,8 @@
 
 #include "cusparse_scope_handle.hpp"
 
+#include <iostream>
+
 namespace oneapi::mkl::sparse::cusparse {
 
 /**
@@ -111,6 +113,7 @@ std::pair<cusparseHandle_t, CUstream> CusparseScopedContextHandler::get_handle_a
                 if (currentStreamId != streamId) {
                     CUSPARSE_ERR_FUNC(cusparseSetStream, handle, streamId);
                 }
+                std::cout << "Thread: " << std::this_thread::get_id() << " cusparseHandle: " << reinterpret_cast<void*>(handle) << " command CUstream: " << reinterpret_cast<void*>(streamId) << " previous CUstream: " << reinterpret_cast<void*>(currentStreamId) << "\n";
                 return { handle, streamId };
             }
             else {
@@ -129,6 +132,7 @@ std::pair<cusparseHandle_t, CUstream> CusparseScopedContextHandler::get_handle_a
     sycl::detail::pi::contextSetExtendedDeleter(*placedContext_, ContextCallback,
                                                 insert_iter.first->second);
 
+    std::cout << "Thread: " << std::this_thread::get_id() << " Created cusparseHandle: " << reinterpret_cast<void*>(handle) << " command CUstream: " << reinterpret_cast<void*>(streamId) << "\n";
     return { handle, streamId };
 }
 

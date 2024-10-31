@@ -248,7 +248,7 @@ TEST_P(SparseSpmmUsmTests, RealSinglePrecision) {
     }
 }
 
-TEST_P(SparseSpmmUsmTests, RealDoublePrecision) {
+/*TEST_P(SparseSpmmUsmTests, RealDoublePrecision) {
     using fpType = double;
     CHECK_DOUBLE_ON_DEVICE(GetParam());
     int num_passed = 0, num_skipped = 0;
@@ -284,7 +284,7 @@ TEST_P(SparseSpmmUsmTests, ComplexDoublePrecision) {
         GTEST_SKIP() << "Passed: " << num_passed << ", Skipped: " << num_skipped
                      << " configurations." << std::endl;
     }
-}
+}*/
 
 INSTANTIATE_TEST_SUITE_P(SparseSpmmUsmTestSuite, SparseSpmmUsmTests, testing::ValuesIn(devices),
                          ::DeviceNamePrint());

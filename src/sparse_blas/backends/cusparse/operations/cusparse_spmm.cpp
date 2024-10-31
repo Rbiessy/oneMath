@@ -99,6 +99,7 @@ void spmm_buffer_size(sycl::queue& queue, oneapi::mkl::transpose opA, oneapi::mk
     bool is_beta_host_accessible = detail::is_ptr_accessible_on_host(queue, beta);
     check_valid_spmm(__func__, opA, opB, A_view, A_handle, B_handle, C_handle,
                      is_alpha_host_accessible, is_beta_host_accessible, alg);
+    std::cout << "spmm_buffer_size\n";
     auto functor = [=, &temp_buffer_size](CusparseScopedContextHandler& sc) {
         auto cu_handle = sc.get_handle(queue);
         auto cu_a = A_handle->backend_handle;
@@ -131,6 +132,7 @@ inline void common_spmm_optimize(oneapi::mkl::transpose opA, oneapi::mkl::transp
         throw mkl::uninitialized("sparse_blas", "spmm_optimize",
                                  "spmm_buffer_size must be called before spmm_optimize.");
     }
+    std::cout << "spmm_optimize\n";
     spmm_descr->optimized_called = true;
     spmm_descr->last_optimized_opA = opA;
     spmm_descr->last_optimized_opB = opB;
@@ -224,6 +226,7 @@ sycl::event spmm(sycl::queue& queue, oneapi::mkl::transpose opA, oneapi::mkl::tr
     bool is_beta_host_accessible = detail::is_ptr_accessible_on_host(queue, beta);
     check_valid_spmm(__func__, opA, opB, A_view, A_handle, B_handle, C_handle,
                      is_alpha_host_accessible, is_beta_host_accessible, alg);
+    std::cout << "spmm, num dependencies: " << dependencies.size() << "\n";
     if (A_handle->all_use_buffer() != spmm_descr->workspace.use_buffer()) {
         detail::throw_incompatible_container(__func__);
     }

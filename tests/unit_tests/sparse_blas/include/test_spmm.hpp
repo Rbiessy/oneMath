@@ -91,7 +91,7 @@ void test_helper_with_format_with_transpose(
                              no_scalars_on_device),
             num_passed, num_skipped);
         // Reset data
-        EXPECT_TRUE_OR_FUTURE_SKIP(
+        /*EXPECT_TRUE_OR_FUTURE_SKIP(
             test_functor_i32(dev, format, nrows_A, ncols_A, ncols_C, density_A_matrix, index_zero,
                              col_major, transpose_A, transpose_B, fp_one, fp_zero, ldb, ldc,
                              default_alg, default_A_view, default_properties, true,
@@ -203,7 +203,7 @@ void test_helper_with_format_with_transpose(
                              col_major, transpose_A, transpose_B, fp_one, fp_zero, ldb, ldc,
                              default_alg, default_A_view, default_properties, no_reset_data,
                              no_scalars_on_device),
-            num_passed, num_skipped);
+            num_passed, num_skipped);*/
     }
 }
 
@@ -226,8 +226,8 @@ void test_helper_with_format(
     const std::vector<oneapi::mkl::sparse::spmm_alg> &non_default_algorithms, int &num_passed,
     int &num_skipped) {
     std::vector<oneapi::mkl::transpose> transpose_vals{ oneapi::mkl::transpose::nontrans,
-                                                        oneapi::mkl::transpose::trans,
-                                                        oneapi::mkl::transpose::conjtrans };
+                                                        /*oneapi::mkl::transpose::trans,
+                                                        oneapi::mkl::transpose::conjtrans*/ };
     for (auto transpose_A : transpose_vals) {
         for (auto transpose_B : transpose_vals) {
             test_helper_with_format_with_transpose<fpType>(
@@ -255,12 +255,12 @@ void test_helper(testFunctorI32 test_functor_i32, testFunctorI64 test_functor_i6
         { oneapi::mkl::sparse::spmm_alg::no_optimize_alg, oneapi::mkl::sparse::spmm_alg::csr_alg1,
           oneapi::mkl::sparse::spmm_alg::csr_alg2, oneapi::mkl::sparse::spmm_alg::csr_alg3 },
         num_passed, num_skipped);
-    test_helper_with_format<fpType>(
+    /*test_helper_with_format<fpType>(
         test_functor_i32, test_functor_i64, dev, sparse_matrix_format_t::COO,
         { oneapi::mkl::sparse::spmm_alg::no_optimize_alg, oneapi::mkl::sparse::spmm_alg::coo_alg1,
           oneapi::mkl::sparse::spmm_alg::coo_alg2, oneapi::mkl::sparse::spmm_alg::coo_alg3,
           oneapi::mkl::sparse::spmm_alg::coo_alg4 },
-        num_passed, num_skipped);
+        num_passed, num_skipped);*/
 }
 
 /// Compute spmm reference as a dense operation

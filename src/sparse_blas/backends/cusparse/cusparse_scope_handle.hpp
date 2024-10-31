@@ -35,6 +35,7 @@
 #endif
 
 #include <thread>
+#include <sstream>
 
 #include "cusparse_error.hpp"
 #include "cusparse_global_handle.hpp"
