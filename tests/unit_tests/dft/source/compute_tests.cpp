@@ -101,12 +101,16 @@ std::vector<DFTParams> test_params{
     { shape{ 22 }, i64{ 1 } },
     { shape{ 128 }, i64{ 1 } },
 
+    { shape{ 3, 1 }, i64{ 1 } },
     { shape{ 4, 4 }, i64{ 1 } },
     { shape{ 4, 4 }, i64{ 2 } },
     { shape{ 4, 3 }, i64{ 9 } },
     { shape{ 7, 8 }, i64{ 1 } },
     { shape{ 64, 5 }, i64{ 1 } },
 
+    { shape{ 3, 2, 1 }, i64{ 1 } },
+    { shape{ 3, 1, 1 }, i64{ 1 } },
+    { shape{ 1, 5, 1 }, i64{ 1 } },
     { shape{ 2, 2, 2 }, i64{ 1 } },
     { shape{ 2, 2, 3 }, i64{ 2 } },
     { shape{ 2, 2, 2 }, i64{ 27 } },

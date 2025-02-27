@@ -158,37 +158,38 @@ public:
         offset_bwd_in = stride_vecs.offset_bwd_in;
         offset_bwd_out = stride_vecs.offset_bwd_out;
 
-        // cufft ignores the first value in inembed and onembed, so there is no harm in putting offset there
-        auto a_min = std::min_element(stride_vecs.vec_a.begin() + 1, stride_vecs.vec_a.end());
-        auto b_min = std::min_element(stride_vecs.vec_b.begin() + 1, stride_vecs.vec_b.end());
+        // cufft ignores the first value in inembed and onembed, so there is no harm in putting offset there (hence rend() - 1)
+        // a_min and b_min are computed starting from the end to avoid swapping dimensions below when strides are equal
+        auto a_min_idx = stride_vecs.vec_a.size() - 1 - (std::min_element(stride_vecs.vec_a.rbegin(), stride_vecs.vec_a.rend() - 1) - stride_vecs.vec_a.rbegin());
+        auto b_min_idx = stride_vecs.vec_b.size() - 1 - (std::min_element(stride_vecs.vec_b.rbegin(), stride_vecs.vec_b.rend() - 1) - stride_vecs.vec_b.rbegin());
         if constexpr (dom == dft::domain::REAL) {
-            if ((a_min != stride_vecs.vec_a.begin() + rank) ||
-                (b_min != stride_vecs.vec_b.begin() + rank)) {
+            if ((a_min_idx != rank - 1) || (b_min_idx != rank - 1)) {
                 throw math::unimplemented(
                     "dft/backends/cufft", __FUNCTION__,
                     "cufft requires the last stride to be the the smallest one for real transforms!");
             }
         }
         else {
-            if (a_min - stride_vecs.vec_a.begin() != b_min - stride_vecs.vec_b.begin()) {
+            if (a_min_idx != b_min_idx) {
                 throw math::unimplemented(
                     "dft/backends/cufft", __FUNCTION__,
                     "cufft requires that if ordered by stride length, the order of strides is the same for input/output or fwd/bwd strides!");
             }
         }
-        const int a_stride = static_cast<int>(*a_min);
-        const int b_stride = static_cast<int>(*b_min);
-        stride_vecs.vec_a.erase(a_min);
-        stride_vecs.vec_b.erase(b_min);
+        const int a_stride = static_cast<int>(stride_vecs.vec_a[a_min_idx]);
+        const int b_stride = static_cast<int>(stride_vecs.vec_b[b_min_idx]);
+        stride_vecs.vec_a.erase(stride_vecs.vec_a.begin() + a_min_idx);
+        stride_vecs.vec_b.erase(stride_vecs.vec_b.begin() + b_min_idx);
         int fwd_istride = a_stride;
         int fwd_ostride = b_stride;
         int bwd_istride =
             stride_api_choice == dft::detail::stride_api::FB_STRIDES ? b_stride : a_stride;
         int bwd_ostride =
             stride_api_choice == dft::detail::stride_api::FB_STRIDES ? a_stride : b_stride;
-        if (a_min - stride_vecs.vec_a.begin() != rank) {
+        if (a_min_idx != rank) {
             // swap dimensions to have the last one have the smallest stride
-            std::swap(n_copy[a_min - stride_vecs.vec_a.begin() - 1], n_copy[rank - 1]);
+            // TODO: Understand and clarify whether the strides should also be swapped (similar to the swap done below for rank > 2)
+            std::swap(n_copy[a_min_idx - 1], n_copy[rank - 1]);
         }
         for (int i = 1; i < rank; i++) {
             if ((stride_vecs.vec_a[i] % a_stride != 0) || (stride_vecs.vec_b[i] % b_stride != 0)) {
