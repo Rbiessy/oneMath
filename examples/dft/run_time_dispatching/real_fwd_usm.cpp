@@ -49,8 +49,10 @@ void run_example(const sycl::device& dev) {
 
     std::cout << "DFT example run_time dispatch" << std::endl;
 
+    // TODO: Revert changes in this file
+    // This is a sample to reproduce the issue from https://github.com/uxlfoundation/oneMath/issues/631
     sycl::queue sycl_queue(dev, exception_handler);
-    auto x_usm = sycl::malloc_shared<float>(N * 2, sycl_queue);
+    /*auto x_usm = sycl::malloc_shared<float>(N * 2, sycl_queue);
 
     // 1. create descriptors
     oneapi::math::dft::descriptor<oneapi::math::dft::precision::SINGLE,
@@ -73,7 +75,49 @@ void run_example(const sycl::device& dev) {
     compute_event.wait();
 
     // 5. Free USM allocation.
-    sycl::free(x_usm, sycl_queue);
+    sycl::free(x_usm, sycl_queue);*/
+
+    namespace dft = oneapi::math::dft;
+    sycl::queue q(dev, exception_handler);
+
+    auto device = q.get_device();
+    std::cout << "Device name: " << device.get_info<sycl::info::device::name>() << "\n";
+
+    std::vector<std::int64_t> shape = {3, 1};
+    const std::int64_t size = shape[0] * shape[1];
+
+    std::vector<std::complex<float>> h_data(size, {1.0f, 0.0f});
+    std::vector<std::complex<float>> h_output(size);
+
+    std::complex<float>* d_data = sycl::malloc_device<std::complex<float>>(size, q);
+    std::complex<float>* d_output = sycl::malloc_device<std::complex<float>>(size, q);
+
+    q.memcpy(d_data, h_data.data(), size * sizeof(std::complex<float>)).wait();
+
+    dft::descriptor<dft::precision::SINGLE, dft::domain::COMPLEX> desc(shape);
+
+    std::vector<std::int64_t> fwd_strides = {0, 1, 1};
+    std::vector<std::int64_t> bwd_strides = {0, 1, 1};
+
+    desc.set_value(dft::config_param::PLACEMENT, dft::config_value::NOT_INPLACE);
+    desc.set_value(dft::config_param::NUMBER_OF_TRANSFORMS, 1);
+    // desc.set_value(dft::config_param::FWD_STRIDES, fwd_strides.data());
+    // desc.set_value(dft::config_param::BWD_STRIDES, bwd_strides.data());
+
+    desc.commit(q);
+
+    sycl::event fft_event = dft::compute_forward(desc, d_data, d_output);
+    fft_event.wait();
+
+    q.memcpy(h_output.data(), d_output, size * sizeof(std::complex<float>)).wait();
+
+    std::cout << "FFT Result:\n";
+    for (std::int64_t i = 0; i < size; i++) {
+        std::cout << h_output[i] << "\n";
+    }
+
+    sycl::free(d_data, q);
+    sycl::free(d_output, q);
 }
 
 //
